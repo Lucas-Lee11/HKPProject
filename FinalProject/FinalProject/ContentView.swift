@@ -8,9 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var currentUser:UserWrapper
+    @State var showingLogin:Bool = false
+    @State var showingCreate:Bool = false
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        if (currentUser.user == nil){
+            Button(action: {
+                self.showingLogin.toggle()
+            }){Text("Login")}
+            .sheet(isPresented: $showingLogin){LoginView()}
+            Button(action: {
+                self.showingCreate.toggle()
+            }){Text("Create Account")}
+            .sheet(isPresented: $showingCreate){CreateAccountView()}
+        }
+        else{
+            if(currentUser.user!.isAdmin){
+                AdminView()
+            }
+            else{
+                Text("\(currentUser.user!.username)")
+            }
+        }
     }
 }
 
