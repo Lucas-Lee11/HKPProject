@@ -1,10 +1,7 @@
-import { Router } from "express";
-const router = Router();
+const router = require("express").Router();
+const User = require("../models/User");
 
-import { User } from "../models/User";
-//const User = require("../models/User");
-
-router.post("/login", async (req, res, next) => {
+router.post("/users/login", async (req, res, next) => {
   const user = await User.findOne({ username: req.body.username });
   if (!user)
     return res.status(400).send({ message: "Username or password is wrong." });
