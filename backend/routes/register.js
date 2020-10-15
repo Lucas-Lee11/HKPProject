@@ -22,10 +22,14 @@ router.post("/users/register", async (req, res, next) => {
   if (username)
     return res.status(409).send({ message: "User already exists." });
 
+  // Hash passwords with a salt using bcrypt
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
   // Create new user using the User schema
   const user = new User({
     username: req.body.username,
-    password: req.body.password,
+    password: hashedPassword,
     permission: req.body.permission,
   });
 
