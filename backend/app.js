@@ -3,8 +3,21 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+// Load environment variables
+dotenv.config();
+
+// Connect to database
+mongoose.connect(
+  process.env.DATABASE_CONNECT,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  () => console.log("Connected to database.")
+);
 
 var loginRouter = require("./routes/login");
+var registerRouter = require("./routes/register");
 
 var app = express();
 
@@ -18,7 +31,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/login", indexRouter);
+app.use("/", loginRouter);
+app.use("/", registerRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
