@@ -15,7 +15,7 @@ struct LoginView: View {
     
     func verifyInput(){
         guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return}
-        let user = User(username: self.username, password: self.password)
+        let user = User(isAdmin: true, username: self.username, password: self.password)
         
         guard let encoded = try? JSONEncoder().encode(user) else {
             print("Failed to encode user")

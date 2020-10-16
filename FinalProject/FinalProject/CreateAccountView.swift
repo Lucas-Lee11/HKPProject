@@ -8,16 +8,12 @@
 import SwiftUI
 
 struct CreateAccountView: View {
-<<<<<<< HEAD
     @Environment(\.presentationMode) var presentationMode
-=======
->>>>>>> origin/main
     @State var newUser:User?
     @State var username:String = ""
     @State var password:String = ""
     @State var adminStatus:Bool = false
     
-<<<<<<< HEAD
     func verifyInput() -> Bool{
         guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return false}
         newUser = User(isAdmin: self.adminStatus, username: self.username, password: self.password)
@@ -51,15 +47,6 @@ struct CreateAccountView: View {
         }.resume()
         
         self.presentationMode.wrappedValue.dismiss()
-=======
-    var validInput:Bool{
-        return !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty
-    }
-    
-    func verifyInput(){
-        guard validInput else {return}
-        newUser = User(isAdmin: self.adminStatus, username: self.username, password: self.password)
->>>>>>> origin/main
     }
     
     var body: some View {
@@ -83,7 +70,6 @@ struct CreateAccountView: View {
                 }
                 Section{
                     Button("Create"){
-<<<<<<< HEAD
                         createAccount()
                     }
                 }
@@ -95,13 +81,8 @@ struct CreateAccountView: View {
             }){
                 Text("Back")
             })
-=======
 
-                    }
-                }
                 
-            }.navigationBarTitle("Create Account")
->>>>>>> origin/main
         }
     }
 }
