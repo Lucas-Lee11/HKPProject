@@ -18,7 +18,7 @@ router.post("/users/register", async (req, res, next) => {
     return res.status(400).send({ message: "Password field cannot be empty." });
 
   // Check if username already exists within the User database
-  const username = await User.findOne({ user: req.body.username });
+  const username = await User.find({ user: req.body.username });
   if (username)
     return res.status(409).send({ message: "User already exists." });
 
@@ -30,7 +30,7 @@ router.post("/users/register", async (req, res, next) => {
   const user = new User({
     username: req.body.username,
     password: hashedPassword,
-    permission: req.body.permission,
+    admin: req.body.admin,
   });
 
   try {

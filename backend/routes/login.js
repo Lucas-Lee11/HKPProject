@@ -14,10 +14,6 @@ router.post("/users/login", async (req, res, next) => {
   if (!user)
     return res.status(400).send({ message: "Username or password is wrong." });
 
-  // Check if a password was sent in request and validate it otherwise 400 error
-  //if (req.body.password !== user.password)
-  //  return res.status(400).send({ message: "Username or password is wrong." });
-
   // Validate password in request body against hashed password in database
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword)
