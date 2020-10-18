@@ -4,15 +4,11 @@ const mongoose = require("mongoose");
 // - name: name of the item
 // - description: description of the item
 // - quantity: number of the same item in a cart
-
 const itemSchema = new mongoose.Schema({
   name: { type: String },
   description: { type: String },
   quantity: { type: Number },
-  image: {
-    data: { type: Buffer },
-    contentType: String,
-  },
+  image: { type: String },
 });
 
-module.exports = new mongoose.model("Item", itemSchema);
+module.exports = mongoose.model("Item", itemSchema);
