@@ -60,20 +60,21 @@ This route requests a JSON object containing a username, password, and permissio
  ### Response
  
 ```json
-[
-  {
-    "name": "item name",
-    "description": "item description",
-    "quantity": "quantity of the item (default: 0)",
-    "image": "imgur link of image (not implemented yet)"
-  },
-  {
-    "name": "another item name",
-    "description": "another item description",
-    "quantity": "another quantity of the item (default: 0)",
-    "image": "imgur link of image (not implemented yet)"
-  }
-]
+{ "items": [
+    {
+      "name": "item name",
+      "description": "item description",
+      "quantity": "quantity of the item (default: 0)",
+      "image": "imgur link of image (not implemented yet)"
+    },
+    {
+      "name": "another item name",
+      "description": "another item description",
+      "quantity": "another quantity of the item (default: 0)",
+      "image": "imgur link of image (not implemented yet)"
+    }
+  ]
+}
 ```
 This route returns a response with a list containing item document objects. Each item has a name (String), description (String), quantity (Number), and image (String imgur link) field.
 
