@@ -39,8 +39,8 @@ struct CreateAccountView: View {
                 print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
                 return
             }
-            if let decoded = try? JSONDecoder().decode(User.self, from: data) {
-                print(decoded.username)
+            if let decoded = try? JSONDecoder().decode(Message.self, from: data) {
+                print(decoded.message)
             } else {
                 print("Invalid response from server")
             }

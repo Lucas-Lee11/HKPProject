@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var currentUser:UserWrapper
+    @EnvironmentObject var currentToken:TokenWrapper
     @State var username:String = ""
     @State var password:String = ""
     
@@ -34,9 +34,9 @@ struct LoginView: View {
                 print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
                 return
             }
-            if let decoded = try? JSONDecoder().decode(User.self, from: data) {
+            if let decoded = try? JSONDecoder().decode(Token.self, from: data) {
                 DispatchQueue.main.async {
-                    self.currentUser.user = decoded
+                    self.currentToken.token = decoded
                 }
             } else {
                 print("Invalid response from server")

@@ -10,7 +10,7 @@ import SwiftUI
 import Foundation
 
 
-struct Item:Codable{
+struct Item:Codable, Equatable{
     var name:String
     var description:String
     var image:Data
@@ -29,4 +29,16 @@ struct Item:Codable{
 
 struct Items:Codable{
     var items:[Item] = [Item]()
+    
+    mutating func add(_ toAdd:Item, num:Int){
+        for (index, _) in items.enumerated(){
+            if items[index] == toAdd{
+                items[index].quantity += num
+                return
+            }
+        }
+        var temp = toAdd
+        temp.quantity = num
+        items.append(temp)
+    }
 }

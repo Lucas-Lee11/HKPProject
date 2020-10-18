@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var currentUser:UserWrapper
+    @EnvironmentObject var currentToken:TokenWrapper
     @State var showingLogin:Bool = false
     @State var showingCreate:Bool = false
+    @State var loadAdmin:Bool = false
     
     var body: some View {
-        if (currentUser.user == nil){
+        if (currentToken.token == nil){
             NavigationView{
                 VStack{
                     Button(action: {
@@ -27,7 +28,10 @@ struct ContentView: View {
                             .clipShape(Capsule())
                     }
                     
-                    .sheet(isPresented: $showingLogin){LoginView()}
+                    .sheet(isPresented: $showingLogin){
+                        LoginView()
+                        
+                    }
                     Button(action: {
                         self.showingCreate.toggle()
                     }){
@@ -38,17 +42,19 @@ struct ContentView: View {
                             .background(Color.blue)
                             .clipShape(Capsule())
                     }
-                    .sheet(isPresented: $showingCreate){CreateAccountView()}
+                    .sheet(isPresented: $showingCreate){
+                        CreateAccountView()
+                    }
                 }.navigationBarTitle("Welcome")
                 
             }
         }
         else{
-            if(currentUser.user!.isAdmin){
+            if(currentToken.isAdmin()){
                 AdminView()
             }
             else{
-                Text("\(currentUser.user!.username)")
+                UserView()
             }
         }
     }

@@ -1,14 +1,15 @@
 //
-//  ListView.swift
+//  Marketplace.swift
 //  FinalProject
 //
-//  Created by Lucas Lee on 10/16/20.
+//  Created by Lucas Lee on 10/17/20.
 //
 
 import SwiftUI
 
-struct ListView: View {
+struct MarketplaceView: View {
     @EnvironmentObject var currentToken:TokenWrapper
+    @Binding var cart:Items
     @State var items:Items = Items()
     
     func loadData(){
@@ -38,13 +39,8 @@ struct ListView: View {
             Form{
                 List{
                     ForEach(items.items, id: \.name){item in
-                        HStack{
-                            Image(uiImage: item.getImage()).resizable().scaledToFit()
-                            Spacer()
-                            VStack{
-                                Text("\(item.name)").bold()
-                                Text("\(item.description)")
-                            }
+                        NavigationLink(destination: DetailView(item:item, cart: $cart)){
+                            Text("\(item.name)").bold()
                         }
                     }
                 }
@@ -60,8 +56,9 @@ struct ListView: View {
     }
 }
 
-struct ListView_Previews: PreviewProvider {
+struct MarketplaceView_Previews: PreviewProvider {
+    @State static var cart:Items = Items()
     static var previews: some View {
-        ListView()
+        MarketplaceView(cart: MarketplaceView_Previews.$cart)
     }
 }

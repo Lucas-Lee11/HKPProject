@@ -1,18 +1,17 @@
 //
-//  ListView.swift
+//  CheckoutView.swift
 //  FinalProject
 //
-//  Created by Lucas Lee on 10/16/20.
+//  Created by Lucas Lee on 10/17/20.
 //
 
 import SwiftUI
 
-struct ListView: View {
+struct CheckoutView: View {
     @EnvironmentObject var currentToken:TokenWrapper
-    @State var items:Items = Items()
+    @Binding var cart:Items
     
-    func loadData(){
-        
+    func clearCart(){
         let url = URL(string: "https://reqres.in/api/hkp")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -23,9 +22,9 @@ struct ListView: View {
                 print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
                 return
             }
-            if let decoded = try? JSONDecoder().decode(Items.self, from: data) {
+            if let _ = try? JSONDecoder().decode(Message.self, from: data) {
                 DispatchQueue.main.async {
-                    self.items = decoded
+                    self.cart = Items()
                 }
             } else {
                 print("Invalid response from server")
@@ -36,21 +35,25 @@ struct ListView: View {
     var body: some View {
         NavigationView{
             Form{
-                List{
-                    ForEach(items.items, id: \.name){item in
-                        HStack{
-                            Image(uiImage: item.getImage()).resizable().scaledToFit()
-                            Spacer()
-                            VStack{
+                Section{
+                    List{
+                        ForEach(cart.items, id: \.name){item in
+                            NavigationLink(destination: DetailView(item:item, cart: $cart)){
                                 Text("\(item.name)").bold()
-                                Text("\(item.description)")
                             }
                         }
                     }
                 }
-                .onAppear(perform: loadData)
+                Section{
+                    Button(action: {
+                        self.clearCart()
+                    }){
+                        Text("Proceed to Payment")
+                    }
+                }
+                
             }
-            .navigationBarTitle("Current Items")
+            .navigationBarTitle("Checkout")
             .navigationBarItems(leading: Button(action:{
                 currentToken.token = nil
             }){
@@ -60,8 +63,9 @@ struct ListView: View {
     }
 }
 
-struct ListView_Previews: PreviewProvider {
+struct CheckoutView_Previews: PreviewProvider {
+    @State static var cart:Items = Items()
     static var previews: some View {
-        ListView()
+        CheckoutView(cart: CheckoutView_Previews.$cart)
     }
 }

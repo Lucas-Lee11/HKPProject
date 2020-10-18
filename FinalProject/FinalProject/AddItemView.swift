@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddItemView: View {
-    @EnvironmentObject var currentUser:UserWrapper
+    @EnvironmentObject var currentToken:TokenWrapper
     @State var name = ""
     @State var description = ""
     @State var image:UIImage?
@@ -48,10 +48,9 @@ struct AddItemView: View {
                 print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
                 return
             }
-            if let decoded = try? JSONDecoder().decode(User.self, from: data) {
+            if let decoded = try? JSONDecoder().decode(Message.self, from: data) {
                 DispatchQueue.main.async {
-                    //read input
-                    
+                    print(decoded)
                 }
             } else {
                 print("Invalid response from server")
@@ -106,7 +105,7 @@ struct AddItemView: View {
             }
             .navigationBarTitle("Add Items")
             .navigationBarItems(leading: Button(action:{
-                currentUser.user = nil
+                currentToken.token = nil
             }){
                 Text("Logout")
             }, trailing: Button(action: {
