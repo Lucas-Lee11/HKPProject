@@ -18,8 +18,9 @@ router.post("/users/register", async (req, res, next) => {
     return res.status(400).send({ message: "Password field cannot be empty." });
 
   // Check if username already exists within the User database
-  const username = await User.findOne({ user: req.body.username });
-  if (username)
+  const username = await User.find({ username: req.body.username });
+  console.log(username);
+  if (username.length > 0)
     return res.status(409).send({ message: "User already exists." });
 
   // Hash passwords with a salt using bcrypt
@@ -30,7 +31,7 @@ router.post("/users/register", async (req, res, next) => {
   const user = new User({
     username: req.body.username,
     password: hashedPassword,
-    permission: req.body.permission,
+    admin: req.body.admin,
   });
 
   try {

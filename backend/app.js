@@ -18,6 +18,8 @@ mongoose.connect(
 
 var loginRouter = require("./routes/login");
 var registerRouter = require("./routes/register");
+var itemRouter = require("./routes/item");
+var cartRouter = require("./routes/cart");
 
 var app = express();
 
@@ -33,6 +35,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", loginRouter);
 app.use("/", registerRouter);
+app.use("/", itemRouter);
+app.use("/", cartRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
