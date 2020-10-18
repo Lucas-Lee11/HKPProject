@@ -14,17 +14,42 @@ struct ContentView: View {
     
     var body: some View {
         if (currentUser.user == nil){
-            Button(action: {
-                self.showingLogin.toggle()
-            }){Text("Login")}
-            .sheet(isPresented: $showingLogin){LoginView()}
-            Button(action: {
-                self.showingCreate.toggle()
-            }){Text("Create Account")}
-            .sheet(isPresented: $showingCreate){CreateAccountView()}
+            NavigationView{
+                VStack{
+                    Button(action: {
+                        self.showingLogin.toggle()
+                    }){
+                        Text("Login")
+                            .font(.title)
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color.blue)
+                            .clipShape(Capsule())
+                    }
+                    
+                    .sheet(isPresented: $showingLogin){LoginView()}
+                    Button(action: {
+                        self.showingCreate.toggle()
+                    }){
+                        Text("Create Account")
+                            .font(.title)
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color.blue)
+                            .clipShape(Capsule())
+                    }
+                    .sheet(isPresented: $showingCreate){CreateAccountView()}
+                }.navigationBarTitle("Welcome")
+                
+            }
         }
         else{
-            Text("\(currentUser.user!.username)")
+            if(currentUser.user!.isAdmin){
+                AdminView()
+            }
+            else{
+                Text("\(currentUser.user!.username)")
+            }
         }
     }
 }
