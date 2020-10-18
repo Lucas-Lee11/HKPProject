@@ -1,11 +1,7 @@
 // Import libraries and databases
 // - Express is the monolith server backend
-// - Bcryptjs is for password hashing
-// - JWT is for JSON tokens for auth
-// - User database
+// - Item database
 const router = require("express").Router();
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
 const Item = require("../models/Item");
 
 router.get("/items/list", async (req, res, next) => {
