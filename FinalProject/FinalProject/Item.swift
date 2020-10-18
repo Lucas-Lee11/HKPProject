@@ -10,23 +10,23 @@ import SwiftUI
 import Foundation
 
 
-struct Item:Codable,Identifiable{
-    var id:UUID = UUID()
+struct Item:Codable{
     var name:String
     var description:String
     var image:Data
+    var quantity:Int = 0
     
     init(name:String, description:String, image:UIImage){
         self.name = name
         self.description = description
-        self.image = image.pngData()!
+        self.image = image.jpegData(compressionQuality: 1.0)!
     }
     
-    func getImage() -> UIImage?{
-        return UIImage(data: self.image)
+    func getImage() -> UIImage{
+        return UIImage(data: self.image)!
     }
 }
 
 struct Items:Codable{
-    var items:[Item]
+    var items:[Item] = [Item]()
 }

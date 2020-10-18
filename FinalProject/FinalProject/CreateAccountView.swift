@@ -53,7 +53,7 @@ struct CreateAccountView: View {
         NavigationView{
             Form{
                 Section{
-                    Text("Enter your info").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    Text("Enter your info").bold()
                     HStack{
                         Text("Username:")
                         Spacer()

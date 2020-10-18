@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct User:Codable,Identifiable{
-    var id:UUID = UUID()
+struct User:Codable{
     var isAdmin:Bool = false
     var username:String
     var password:String
