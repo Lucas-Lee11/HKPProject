@@ -34,7 +34,7 @@ This route requests a JSON object containing a username and password
 {
   "username": "some username",
   "password": "some password",
-  "permission": "level of admin rights"
+  "admin": "boolean"
 }
 ```
 This route requests a JSON object containing a username, password, and permission level (i.e. admin or customer)
