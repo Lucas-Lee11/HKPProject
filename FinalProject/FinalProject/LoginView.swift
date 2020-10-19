@@ -12,13 +12,28 @@ struct LoginView: View {
     @EnvironmentObject var currentToken:TokenWrapper
     @State var username:String = ""
     @State var password:String = ""
+    @State var user:User?
+    @State var errorMessage:String = ""
+    @State var errorTitle:String = ""
+    @State var showingAlert:Bool = false
     
-    func verifyInput(){
-        guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return}
-        let user = User(isAdmin: true, username: self.username, password: self.password)
-        
-        guard let encoded = try? JSONEncoder().encode(user) else {
-            print("Failed to encode user")
+    func verifyInput() -> Bool{
+        guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return false}
+        user = User(username: self.username, password: self.password)
+        return true
+    }
+    
+    func checkAccount(){
+        guard verifyInput() else {
+            self.errorMessage = "Enter a username and password"
+            self.errorTitle = "Error in logging in"
+            self.showingAlert.toggle()
+            return
+        }
+        guard let encoded = try? JSONEncoder().encode(self.user) else {
+            self.errorMessage = "Failed to encode user"
+            self.errorTitle = "Error in logging in"
+            self.showingAlert.toggle()
             return
         }
         
@@ -31,19 +46,35 @@ struct LoginView: View {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
-                print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
+                DispatchQueue.main.async {
+                    self.errorMessage = "No data in response: \(error?.localizedDescription ?? "Unknown error")."
+                    self.errorTitle = "Error in logging in"
+                    self.showingAlert.toggle()
+                }
                 return
             }
             if let decoded = try? JSONDecoder().decode(Token.self, from: data) {
                 DispatchQueue.main.async {
-                    self.currentToken.token = decoded
+                    currentToken.token = decoded
+                    self.presentationMode.wrappedValue.dismiss()
                 }
-            } else {
-                print("Invalid response from server")
+            }
+            else if let decoded = try? JSONDecoder().decode(Message.self, from: data){
+                DispatchQueue.main.async{
+                    self.errorMessage = "\(decoded.message)"
+                    self.errorTitle = "Error in logging in"
+                    self.showingAlert.toggle()
+                }
+               return
+            }
+            else {
+                DispatchQueue.main.async{
+                    self.errorMessage = "Invalid response from server"
+                    self.errorTitle = "Error in logging in"
+                    self.showingAlert.toggle()
+                }
             }
         }.resume()
-        
-        self.presentationMode.wrappedValue.dismiss()
     }
     
     var body: some View {
@@ -64,7 +95,10 @@ struct LoginView: View {
                 }
                 Section{
                     Button("Login"){
-                        verifyInput()
+                        checkAccount()
+                    }
+                    .alert(isPresented: $showingAlert) {
+                        Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                     }
                 }
                 

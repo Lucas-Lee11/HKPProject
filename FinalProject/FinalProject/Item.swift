@@ -33,7 +33,7 @@ struct Items:Codable{
     mutating func add(_ toAdd:Item, num:Int){
         for (index, _) in items.enumerated(){
             if items[index] == toAdd{
-                items[index].quantity += num
+                items[index].quantity = num
                 return
             }
         }
@@ -41,4 +41,9 @@ struct Items:Codable{
         temp.quantity = num
         items.append(temp)
     }
+}
+
+struct CartSend:Codable{
+    var token:String
+    var cart:[Item]
 }

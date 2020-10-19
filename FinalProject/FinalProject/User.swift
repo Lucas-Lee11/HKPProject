@@ -8,9 +8,9 @@
 import Foundation
 
 struct User:Codable{
-    var isAdmin:Bool = false
     var username:String
     var password:String
+    var isAdmin:Bool = false
 }
 
 struct Token:Codable{

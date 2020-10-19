@@ -12,18 +12,28 @@ struct CreateAccountView: View {
     @State var newUser:User?
     @State var username:String = ""
     @State var password:String = ""
+    @State var errorMessage:String = ""
+    @State var errorTitle:String = ""
     @State var adminStatus:Bool = false
+    @State var showingAlert:Bool = false
     
     func verifyInput() -> Bool{
         guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return false}
-        newUser = User(isAdmin: self.adminStatus, username: self.username, password: self.password)
+        newUser = User(username: self.username, password: self.password, isAdmin: self.adminStatus)
         return true
     }
     
     func createAccount(){
-        guard verifyInput() else {return}
-        guard let user = newUser else {return}
-        guard let encoded = try? JSONEncoder().encode(user) else {
+        guard verifyInput() else {
+            self.errorMessage = "Enter a username and password"
+            self.errorTitle = "Error in creating account"
+            self.showingAlert.toggle()
+            return
+        }
+        guard let encoded = try? JSONEncoder().encode(newUser) else {
+            self.errorMessage = "Failed to encode"
+            self.errorTitle = "Error in creating account"
+            self.showingAlert.toggle()
             print("Failed to encode user")
             return
         }
@@ -36,17 +46,25 @@ struct CreateAccountView: View {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
-                print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
+                DispatchQueue.main.async {
+                    self.errorMessage = "No data in response: \(error?.localizedDescription ?? "Unknown error")."
+                    self.errorTitle = "Error in creating account"
+                    self.showingAlert.toggle()
+                }
                 return
             }
             if let decoded = try? JSONDecoder().decode(Message.self, from: data) {
                 print(decoded.message)
+                self.presentationMode.wrappedValue.dismiss()
             } else {
-                print("Invalid response from server")
+                DispatchQueue.main.async {
+                    self.errorMessage = "Invalid response from server"
+                    self.errorTitle = "Error in creating account"
+                    self.showingAlert.toggle()
+                }
             }
         }.resume()
         
-        self.presentationMode.wrappedValue.dismiss()
     }
     
     var body: some View {
@@ -71,6 +89,9 @@ struct CreateAccountView: View {
                 Section{
                     Button("Create"){
                         createAccount()
+                    }
+                    .alert(isPresented: $showingAlert) {
+                        Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                     }
                 }
                 
