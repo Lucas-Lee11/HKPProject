@@ -9,48 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var currentToken:TokenWrapper
-    @State var showingLogin:Bool = false
-    @State var showingCreate:Bool = false
-    @State var loadAdmin:Bool = false
     
     var body: some View {
         if (currentToken.token == nil){
-            NavigationView{
-                VStack{
-                    Button(action: {
-                        self.showingLogin.toggle()
-                    }){
-                        Text("Login")
-                            .font(.title)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(Color.blue)
-                            .clipShape(Capsule())
-                    }
-                    
-                    .sheet(isPresented: $showingLogin){
-                        LoginView()
-                        
-                    }
-                    Button(action: {
-                        self.showingCreate.toggle()
-                    }){
-                        Text("Create Account")
-                            .font(.title)
-                            .padding()
-                            .foregroundColor(.white)
-                            .background(Color.blue)
-                            .clipShape(Capsule())
-                    }
-                    .sheet(isPresented: $showingCreate){
-                        CreateAccountView()
-                    }
-                }.navigationBarTitle("Welcome")
-                
-            }
+            WelcomeView()
         }
         else{
-            if(currentToken.isAdmin()){
+            if(currentToken.isAdmin){
                 AdminView()
             }
             else{

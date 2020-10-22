@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct UserView: View {
+    @EnvironmentObject var currentToken:TokenWrapper
     @State var cart:Items = Items()
     
     func loadCart(){
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        guard let encoded = try? JSONEncoder().encode(currentToken.token) else {
+            print("Failed to encode items or no token")
+            return
+        }
+        
+        let url = URL(string: "https://hkp-final.herokuapp.com/cart")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "GET"
+        request.httpMethod = "POST"
+        request.httpBody = encoded
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
@@ -26,7 +33,7 @@ struct UserView: View {
                     self.cart = decoded
                 }
             } else {
-                print("Invalid response from server")
+                print("Invalid response from server on loadCart")
             }
         }.resume()
     }
@@ -35,7 +42,7 @@ struct UserView: View {
         TabView{
             MarketplaceView(cart: $cart)
                 .tabItem{
-                    Image(systemName: "card.badge.plus")
+                    Image(systemName: "cart.badge.plus")
                     Text("Marketplace")
                 }
             CheckoutView(cart: $cart)
@@ -43,7 +50,8 @@ struct UserView: View {
                     Image(systemName: "creditcard")
                     Text("Checkout")
                 }
-        }.onAppear(perform: loadCart)
+                .onAppear(perform: loadCart)
+        }
     }
 }
 

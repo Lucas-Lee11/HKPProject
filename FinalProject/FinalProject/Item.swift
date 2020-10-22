@@ -11,20 +11,23 @@ import Foundation
 
 
 struct Item:Codable, Equatable{
+    var _id:String = ""
     var name:String
     var description:String
-    var image:Data
+    //var image:Data
+    var image:String = ""
     var quantity:Int = 0
+    var __v:Int = 0
     
-    init(name:String, description:String, image:UIImage){
-        self.name = name
-        self.description = description
-        self.image = image.jpegData(compressionQuality: 1.0)!
-    }
-    
-    func getImage() -> UIImage{
-        return UIImage(data: self.image)!
-    }
+//    init(name:String, description:String, image:UIImage){
+//        self.name = name
+//        self.description = description
+//        self.image = image.jpegData(compressionQuality: 1.0)!
+//    }
+//
+//    func getImage() -> UIImage{
+//        return UIImage(data: self.image)!
+//    }
 }
 
 struct Items:Codable{
@@ -46,4 +49,9 @@ struct Items:Codable{
 struct CartSend:Codable{
     var token:String
     var cart:[Item]
+}
+
+struct ItemSend:Codable{
+    var token:String
+    var items:[Item]
 }

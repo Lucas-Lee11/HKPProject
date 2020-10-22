@@ -16,6 +16,7 @@ struct LoginView: View {
     @State var errorMessage:String = ""
     @State var errorTitle:String = ""
     @State var showingAlert:Bool = false
+    @Binding var nextToken:Token
     
     func verifyInput() -> Bool{
         guard  !username.trimmingCharacters(in: .whitespaces).isEmpty && !password.trimmingCharacters(in: .whitespaces).isEmpty else {return false}
@@ -37,12 +38,11 @@ struct LoginView: View {
             return
         }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/users/login")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         request.httpBody = encoded
-        
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
@@ -54,8 +54,8 @@ struct LoginView: View {
                 return
             }
             if let decoded = try? JSONDecoder().decode(Token.self, from: data) {
-                DispatchQueue.main.async {
-                    currentToken.token = decoded
+                DispatchQueue.main.sync {
+                    self.nextToken = decoded
                     self.presentationMode.wrappedValue.dismiss()
                 }
             }
@@ -110,11 +110,5 @@ struct LoginView: View {
                 Text("Back")
             })
         }
-    }
-}
-
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
     }
 }

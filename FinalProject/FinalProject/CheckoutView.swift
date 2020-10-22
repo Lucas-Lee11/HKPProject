@@ -13,13 +13,13 @@ struct CheckoutView: View {
     @State var showingAlert:Bool = false
     
     func saveCart(){
-        let newCart:CartSend = CartSend(token: self.currentToken.token!.token, cart: cart.items)
+        let newCart = ItemSend(token: self.currentToken.token!.token, items: cart.items)
         
         guard let encoded = try? JSONEncoder().encode(newCart) else {
             return
         }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/cart/create")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
@@ -35,15 +35,39 @@ struct CheckoutView: View {
                     print(decoded.message)
                 }
             } else {
-                print("Invalid response from server")
+                print("Invalid response from server on saveCart")
             }
         }.resume()
         
     }
     
     func clearCart(){
+        let newCart = ItemSend(token: self.currentToken.token!.token, items: cart.items)
+        
+        guard let encoded = try? JSONEncoder().encode(newCart) else {
+            return
+        }
+        
+        let url = URL(string: "https://hkp-final.herokuapp.com/checkout")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        request.httpBody = encoded
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
+                return
+            }
+            if let decoded = try? JSONDecoder().decode(Message.self, from: data) {
+                DispatchQueue.main.async {
+                    print(decoded.message)
+                }
+            } else {
+                print("Invalid response from server on saveCart")
+            }
+        }.resume()
         self.cart = Items()
-        saveCart()
     }
     
     var body: some View {
@@ -52,7 +76,7 @@ struct CheckoutView: View {
                 Section{
                     List{
                         ForEach(cart.items, id: \.name){item in
-                            NavigationLink(destination: DetailView(item:item, cart: $cart)){
+                            NavigationLink(destination: DetailView(item:item, num: item.quantity , cart: $cart)){
                                 Text("\(item.name)").bold()
                             }
                         }

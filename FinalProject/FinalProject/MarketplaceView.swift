@@ -13,11 +13,16 @@ struct MarketplaceView: View {
     @State var items:Items = Items()
     
     func loadData(){
+        guard let encoded = try? JSONEncoder().encode(currentToken.token) else {
+            print("Failed to encode items")
+            return
+        }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/items/list")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "GET"
+        request.httpMethod = "POST"
+        request.httpBody = encoded
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
@@ -29,19 +34,19 @@ struct MarketplaceView: View {
                     self.items = decoded
                 }
             } else {
-                print("Invalid response from server")
+                print("Invalid response from server for ListView")
             }
         }.resume()
     }
     
     func saveCart(){
-        let newCart:CartSend = CartSend(token: self.currentToken.token!.token, cart: cart.items)
+        let newCart:ItemSend = ItemSend(token: self.currentToken.token!.token, items: cart.items)
         
         guard let encoded = try? JSONEncoder().encode(newCart) else {
             return
         }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/cart/create")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
@@ -57,7 +62,7 @@ struct MarketplaceView: View {
                     print(decoded.message)
                 }
             } else {
-                print("Invalid response from server")
+                print("Invalid response from server on saveCart")
             }
         }.resume()
         
@@ -73,7 +78,6 @@ struct MarketplaceView: View {
                         }
                     }
                 }
-                .onAppear(perform: loadData)
             }
             .navigationBarTitle("Current Items")
             .navigationBarItems(leading: Button(action:{
@@ -83,7 +87,7 @@ struct MarketplaceView: View {
             }, trailing: Button("Save"){
                 saveCart()
             })
-        }
+        }.onAppear(perform: loadData)
     }
 }
 

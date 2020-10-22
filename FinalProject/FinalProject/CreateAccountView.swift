@@ -38,11 +38,12 @@ struct CreateAccountView: View {
             return
         }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/users/register")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         request.httpBody = encoded
+        
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
@@ -53,8 +54,8 @@ struct CreateAccountView: View {
                 }
                 return
             }
-            if let decoded = try? JSONDecoder().decode(Message.self, from: data) {
-                print(decoded.message)
+            if let decoded = try? JSONDecoder().decode(Token.self, from: data) {
+                print(decoded.token)
                 self.presentationMode.wrappedValue.dismiss()
             } else {
                 DispatchQueue.main.async {
@@ -62,9 +63,9 @@ struct CreateAccountView: View {
                     self.errorTitle = "Error in creating account"
                     self.showingAlert.toggle()
                 }
+                return
             }
         }.resume()
-        
     }
     
     var body: some View {

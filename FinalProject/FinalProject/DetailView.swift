@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DetailView: View {
+    @Environment(\.presentationMode) var presentationMode
     @State var item:Item
     @State var num:Int = 0
     @Binding var cart:Items
@@ -16,13 +17,15 @@ struct DetailView: View {
         NavigationView{
             Form{
                 Section{
-                    Image(uiImage: item.getImage()).resizable().scaledToFit()
+                    //Image(uiImage: item.getImage()).resizable().scaledToFit()
                     Text("\(item.description)")
                 }
                 Section{
                     Stepper("Quantity", value: $num, in: 0...100)
+                    Text("Number: \(num)")
                     Button(action: {
                         self.cart.add(item, num: num)
+                        self.presentationMode.wrappedValue.dismiss()
                     }){
                         Text("Add to cart")
                     }
@@ -30,12 +33,5 @@ struct DetailView: View {
                 
             }
         }
-    }
-}
-
-struct DetailView_Previews: PreviewProvider {
-    @State static var cart:Items = Items()
-    static var previews: some View {
-        DetailView(item: Item(name: "Hello", description: "asdf", image: UIImage(systemName: "circle.fill")!), cart: DetailView_Previews.$cart)
     }
 }

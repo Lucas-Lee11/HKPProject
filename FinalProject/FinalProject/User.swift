@@ -18,7 +18,7 @@ struct Token:Codable{
 }
 
 struct AdminConfirm:Codable{
-    var isAdmin:Bool
+    var message:Bool
 }
 
 struct Message:Codable{
@@ -32,15 +32,16 @@ struct Message:Codable{
 
 class TokenWrapper:ObservableObject{
     @Published var token:Token?
+    @Published var isAdmin:Bool = false
     
-    func isAdmin() -> Bool{
-        var out = false
+    func setAdmin(){
+        print(token?.token ?? "no token")
         guard let encoded = try? JSONEncoder().encode(token) else {
             print("Failed to encode items or no token")
-            return false
+            return
         }
         
-        let url = URL(string: "https://reqres.in/api/hkp")!
+        let url = URL(string: "https://hkp-final.herokuapp.com/isAdmin")!
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
@@ -53,14 +54,13 @@ class TokenWrapper:ObservableObject{
                 return
             }
             if let decoded = try? JSONDecoder().decode(AdminConfirm.self, from: data) {
-                DispatchQueue.main.async {
-                    out = decoded.isAdmin
+                DispatchQueue.main.sync {
+                    print(decoded.message)
+                    self.isAdmin = decoded.message
                 }
             } else {
-                print("Invalid response from server")
+                print("Invalid response from server for isAdmin")
             }
         }.resume()
-        
-        return out
     }
 }
